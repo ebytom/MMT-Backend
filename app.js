@@ -59,4 +59,25 @@ app.use("/api/v1/app/metadata", isAuthenticated, metadata);
 // error handler
 app.use(error);
 
+// Database connection and server startup for Vercel
+const { connectDB } = require("./database/connection");
+
+// Connect to database
+if (require.main === module) {
+  // This code only runs when app.js is the main module (entry point)
+  const port = process.env.PORT || 8000;
+
+  connectDB().then(() => {
+    try {
+      app.listen(port, () => {
+        console.log(`Server connected on port ${port}`);
+      });
+    } catch (error) {
+      console.log('Cannot connect to the server');
+    }
+  }).catch(error => {
+    console.log("Invalid database connection...!");
+  });
+}
+
 module.exports = app;
